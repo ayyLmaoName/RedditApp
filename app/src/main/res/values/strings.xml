@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RedditApp</string>
+    <string name="btnFavPost">Omiljeni Postovi</string>
+    <string name="btnFavSub">Omiljeni Subredditi</string>
+</resources>
