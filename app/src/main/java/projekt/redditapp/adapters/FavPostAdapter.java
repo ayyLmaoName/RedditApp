@@ -54,7 +54,10 @@ public class FavPostAdapter extends ArrayAdapter<Post> {
         tvKreiranje.setText(favPost.getVrijemeKreiranja().toString());
         vPostID.setTag(favPost.getPostID());
 
-        if (favPost.getThumbnail() != null && favPost.getThumbnail().length() != 0) {
+
+        if (favPost.getThumbnail() == null) {
+            ivThumbnail.setImageDrawable(context.getDrawable(R.drawable.reddit_logo));
+        } else {
             Picasso.with(context).load(favPost.getThumbnail()).into(ivThumbnail);
         }
 

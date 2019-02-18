@@ -6,7 +6,7 @@
         	ID integer primary key autoincrement,
         	Naziv text not null,
         	Link text not null,
-            Thumbnail Blob,
+            Thumbnail String,
             User text not null,
             VrijemeKreiranja text,
             PostID text

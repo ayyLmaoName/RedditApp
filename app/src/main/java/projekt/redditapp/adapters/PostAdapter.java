@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -50,10 +51,12 @@ public class PostAdapter extends ArrayAdapter<Post> {
         View vPostIDrez = convertView.findViewById(R.id.vPostIDrez);
         imageButton = convertView.findViewById(R.id.ibFavoriteRez);
 
-
-        if (post.getThumbnail() != null && post.getThumbnail().length() != 0) {
+        if (post.getThumbnail() == null) {
+            ivThumbnail.setImageDrawable(context.getDrawable(R.drawable.reddit_logo));
+        } else {
             Picasso.with(context).load(post.getThumbnail()).into(ivThumbnail);
         }
+
         tvUpRez.setText(post.getUpvotes());
         tvNazivRez.setText(post.getNaziv());
         tvNazivRez.setTag(post.getLink());

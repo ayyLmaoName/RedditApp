@@ -194,8 +194,12 @@ public class MainActivity extends AppCompatActivity implements PostProvider {
                     Date created = new Date((long) data.getCreated() * 1000);
 
                     Post rezultat = new Post(data.getTitle(),
-                            data.getUrl(), data.getAuthor(), data.getUps(), created, data.getId(), data.getThumbnail());
+                            data.getUrl(), data.getAuthor(), data.getUps(), created, data.getId());
 
+                    String thumb = data.getThumbnail();
+                    if (thumb != null && !thumb.equals("self")) {
+                        rezultat.setThumbnail(thumb);
+                    }
 
                     int postFromDBIndex = favPosts.indexOf(rezultat);
 
