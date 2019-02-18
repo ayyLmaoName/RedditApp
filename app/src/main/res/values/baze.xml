@@ -8,7 +8,7 @@
         	Link text not null,
             Thumbnail Blob,
             User text not null,
-            VrijemeKreiranja text
+            VrijemeKreiranja text,
             PostID text
 
         )

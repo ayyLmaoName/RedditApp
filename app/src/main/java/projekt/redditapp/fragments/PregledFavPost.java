@@ -1,4 +1,4 @@
-package projekt.redditapp.fragmenti;
+package projekt.redditapp.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,7 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import projekt.redditapp.FavPostAdapter;
+import projekt.redditapp.PostProvider;
+import projekt.redditapp.adapters.FavPostAdapter;
 import projekt.redditapp.R;
 
 public class PregledFavPost extends Fragment {
@@ -16,20 +17,17 @@ public class PregledFavPost extends Fragment {
     public static final String TAG = "PregledFavPost";
     ListView lvFavPostovi;
     FavPostAdapter adapter;
+    PostProvider provider;
 
+    public PregledFavPost() {
 
-    public PregledFavPost(FavPostAdapter adapter) {
-        this.adapter = adapter;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    }
+        this.provider = (PostProvider) getActivity();
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
     }
 
     @Override
@@ -37,7 +35,9 @@ public class PregledFavPost extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.lista_fav_postovi, container, false);
 
-        this.lvFavPostovi = (ListView) view.findViewById(R.id.lvFavPostovi);
+        this.lvFavPostovi = view.findViewById(R.id.lvFavPostovi);
+        this.adapter = new FavPostAdapter(getContext(), R.layout.fav_post, provider.getFavPosts());
+
 
         this.lvFavPostovi.setAdapter(this.adapter);
 

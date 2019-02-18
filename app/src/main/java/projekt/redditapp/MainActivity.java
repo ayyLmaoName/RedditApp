@@ -1,5 +1,7 @@
 package projekt.redditapp;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -10,11 +12,31 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import projekt.redditapp.fragmenti.PregledFavPost;
-import projekt.redditapp.fragmenti.PregledFavSub;
-import projekt.redditapp.fragmenti.PregledRezultati;
+import java.util.ArrayList;
+import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+import projekt.redditapp.API.SubredditService;
+import projekt.redditapp.Baza.Baza;
+import projekt.redditapp.Baza.TblPost;
+import projekt.redditapp.Baza.TblSubreddit;
+import projekt.redditapp.models.Post;
+import projekt.redditapp.adapters.FavPostAdapter;
+import projekt.redditapp.adapters.FavSubAdapter;
+import projekt.redditapp.adapters.PostAdapter;
+import projekt.redditapp.fragments.PregledFavPost;
+import projekt.redditapp.fragments.PregledFavSub;
+import projekt.redditapp.fragments.PregledRezultati;
+import projekt.redditapp.models.PostData;
+import projekt.redditapp.models.RedditJSON;
+import projekt.redditapp.models.RedditPost;
+import projekt.redditapp.models.Subreddit;
+import projekt.redditapp.models.SubredditPosts;
+import projekt.redditapp.network.RetrofitClientInstance;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class MainActivity extends AppCompatActivity implements PostProvider {
 
     Button btnFavPost;
     Button btnFavSub;
@@ -23,18 +45,36 @@ public class MainActivity extends AppCompatActivity {
 
     FavPostAdapter favPostAdapter;
     FavSubAdapter favSubAdapter;
-    RezultatiAdapter rezultatiAdapter;
+    PostAdapter rezultatiAdapter;
+    SubredditService service;
+
+    ArrayList<Post> results;
+    Subreddit subreddit;
+
+    Context context;
+
+    TblSubreddit tblSubreddit;
+    TblPost tblPost;
+    SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.btnFavPost = (Button) this.findViewById(R.id.btnFavPost);
-        this.btnFavSub = (Button) this.findViewById(R.id.btnFavSub);
-        this.etPretrazi = (EditText) this.findViewById(R.id.etSearch);
-        this.btnPretrazi = (Button) this.findViewById(R.id.btnPretrazi);
+        this.btnFavPost = this.findViewById(R.id.btnFavPost);
+        this.btnFavSub = this.findViewById(R.id.btnFavSub);
+        this.etPretrazi = this.findViewById(R.id.etSearch);
+        this.btnPretrazi = this.findViewById(R.id.btnPretrazi);
 
+        Baza baza = new Baza(this);
+        db = baza.vratiBazu();
+
+        this.context = this;
+        this.tblSubreddit = new TblSubreddit(db);
+        this.tblPost = new TblPost(db);
+
+        this.service = RetrofitClientInstance.getRetrofitInstance().create(SubredditService.class);
 
         this.btnFavPost.setOnClickListener(new View.OnClickListener() {
 
@@ -45,18 +85,16 @@ public class MainActivity extends AppCompatActivity {
 
                 FragmentManager fm = getSupportFragmentManager();
 
-                if (fragA == null || fragB == null){
+                if (fragA == null || fragB == null) {
 
                     FragmentTransaction transakcija = fm.beginTransaction();
-                    transakcija.add(R.id.flFragmenti, new PregledFavPost(favPostAdapter), PregledFavPost.TAG);
+                    transakcija.add(R.id.flFragmenti, new PregledFavPost(), PregledFavPost.TAG);
                     transakcija.commit();
-                }
-
-                else {
+                } else {
 
                     FragmentTransaction transakcija = fm.beginTransaction();
 
-                    transakcija.replace(R.id.flFragmenti, new PregledFavPost(favPostAdapter), PregledFavPost.TAG);
+                    transakcija.replace(R.id.flFragmenti, new PregledFavPost(), PregledFavPost.TAG);
                     transakcija.addToBackStack("");
                     transakcija.commit();
                 }
@@ -72,18 +110,16 @@ public class MainActivity extends AppCompatActivity {
 
                 FragmentManager fm = getSupportFragmentManager();
 
-                if (fragA == null || fragB == null){
+                if (fragA == null || fragB == null) {
 
                     FragmentTransaction transakcija = fm.beginTransaction();
-                    transakcija.add(R.id.flFragmenti, new PregledFavSub(favSubAdapter), PregledFavSub.TAG);
+                    transakcija.add(R.id.flFragmenti, new PregledFavSub(), PregledFavSub.TAG);
                     transakcija.commit();
-                }
-
-                else {
+                } else {
 
                     FragmentTransaction transakcija = fm.beginTransaction();
 
-                    transakcija.replace(R.id.flFragmenti, new PregledFavSub(favSubAdapter), PregledFavSub.TAG);
+                    transakcija.replace(R.id.flFragmenti, new PregledFavSub(), PregledFavSub.TAG);
                     transakcija.addToBackStack("");
                     transakcija.commit();
                 }
@@ -95,9 +131,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode ==
-                        KeyEvent.KEYCODE_ENTER)
-                {
-                    klikPretraga();
+                        KeyEvent.KEYCODE_ENTER) {
+                    searchSubredditForPosts();
                 }
                 return false;
             }
@@ -107,42 +142,97 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                klikPretraga();
+                searchSubredditForPosts();
+            }
+        });
+
+    }
+
+    @Override
+    public ArrayList<Post> getResults() {
+        return results;
+    }
+
+    public Subreddit getSubreddit() {
+        return subreddit;
+    }
+
+    public ArrayList<Post> getFavPosts() {
+        ArrayList<Post> favPosts = tblPost.SelectAll();
+        return favPosts;
+    }
+
+    public ArrayList<Subreddit> getFavSubreddits() {
+        ArrayList<Subreddit> favSubs = tblSubreddit.SelectAll();
+        return favSubs;
+    }
+
+    public void searchSubredditForPosts() {
+        String pretraga = etPretrazi.getText() + "";
+        subreddit = new Subreddit(pretraga, "https://reddit.com/r/" + pretraga, "1");
+        Subreddit subFromDB = tblSubreddit.search(pretraga);
+
+        if (subFromDB != null) {
+            subreddit = subFromDB;
+        }
+        Call<RedditJSON> call = this.service.getPosts(pretraga + "/hot.json");
+
+        call.enqueue(new Callback<RedditJSON>() {
+            @Override
+            public void onResponse(Call<RedditJSON> call, Response<RedditJSON> response) {
+
+                SubredditPosts postsResponse = response.body().getData();
+                ArrayList<RedditPost> posts = postsResponse.getChildren();
+
+                results = new ArrayList<>();
+
+                ArrayList<Post> favPosts = tblPost.SelectAll();
+
+                for (RedditPost post : posts) {
+                    PostData data = post.getData();
+
+                    Date created = new Date((long) data.getCreated() * 1000);
+
+                    Post rezultat = new Post(data.getTitle(),
+                            data.getUrl(), data.getAuthor(), data.getUps(), created, data.getId(), data.getThumbnail());
+
+
+                    int postFromDBIndex = favPosts.indexOf(rezultat);
+
+                    if (postFromDBIndex != -1) {
+                        rezultat.setID(favPosts.get(postFromDBIndex).getID());
+                    }
+
+                    results.add(rezultat);
+                }
+
+                Fragment fragA = getSupportFragmentManager().findFragmentByTag("PregledFavPost");
+                Fragment fragB = getSupportFragmentManager().findFragmentByTag("PregledFavSub");
+
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction transakcija = fm.beginTransaction();
+
+                PregledRezultati rez = new PregledRezultati();
+
+                if (fragA == null || fragB == null) {
+
+                    transakcija.add(R.id.flFragmenti, rez, PregledRezultati.TAG);
+                } else {
+
+                    transakcija.replace(R.id.flFragmenti, rez, PregledRezultati.TAG);
+                    transakcija.addToBackStack("");
+                }
+
+                transakcija.commit();
+
+            }
+
+            @Override
+            public void onFailure(Call<RedditJSON> call, Throwable t) {
+
             }
         });
 
 
-
-    }
-
-    public void klikPretraga(){
-        Fragment fragA = getSupportFragmentManager().findFragmentByTag("PregledFavPost");
-        Fragment fragB = getSupportFragmentManager().findFragmentByTag("PregledFavSub");
-
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction transakcija = fm.beginTransaction();
-
-        Bundle bundle= new Bundle();
-        String pretraga = etPretrazi.getText()+"";
-        bundle.putString("subreddit", pretraga);
-
-        PregledRezultati rez = new PregledRezultati(rezultatiAdapter);
-        rez.setArguments(bundle);
-
-        if (fragA == null || fragB == null){
-
-            transakcija.add(R.id.flFragmenti, rez, PregledRezultati.TAG);
-        }
-
-        else {
-
-
-
-            transakcija.replace(R.id.flFragmenti, rez, PregledRezultati.TAG);
-            transakcija.addToBackStack("");
-        }
-
-
-        transakcija.commit();
     }
 }

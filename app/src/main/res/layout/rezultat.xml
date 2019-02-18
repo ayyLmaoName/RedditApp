@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+
+    <ImageView
+        android:id="@+id/ivThumbnailRez"
+        android:layout_width="100dp"
+        android:layout_height="108dp" />
+
+    <LinearLayout
+        android:layout_width="235dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvNazivRez"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:ellipsize="marquee"
+            android:paddingLeft="10dp"
+            android:textStyle="bold"
+            android:scrollHorizontally="true"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/tvUserRez"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/tvUpvotesRez"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:clickable="true"
+            android:paddingLeft="10dp"
+            android:text="" />
+
+        <TextView
+            android:id="@+id/tvKreiranjeRez"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:text="" />
+
+    </LinearLayout>
+
+
+    <!-- ovaj view služi da bi se popunio prostor + spremanje postID u tag-->
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/vPostIDrez"
+        android:tag=""/>
+
+    <ImageButton
+        android:id="@+id/ibFavoriteRez"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/prazno" />
+
+</LinearLayout>

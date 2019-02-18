@@ -23,7 +23,7 @@
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/puno"
+            android:background="@drawable/prazno"
             android:id="@+id/ibFavoriteRez"
             android:layout_gravity="center_vertical"
             android:layout_alignParentRight="true"/>
@@ -31,9 +31,9 @@
 
 
     <ListView
+        android:id="@+id/lvRezultati"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/lvRezultati">
+        android:layout_height="wrap_content">
 
     </ListView>
 </LinearLayout>

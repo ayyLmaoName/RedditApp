@@ -1,17 +1,16 @@
 package projekt.redditapp.Baza;
 
-import projekt.redditapp.*;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
-import projekt.redditapp.ListFavPost;
+import projekt.redditapp.models.Post;
 
-public class tblFavPost {
+public class TblPost {
     public static final String NAZIV_TABLICE = "favPost";
     public static final String ID = "ID";
     public static final String NAZIV = "Naziv";
@@ -22,44 +21,47 @@ public class tblFavPost {
     public static final String PostID = "PostID";
 
     SQLiteDatabase db;
-    public tblFavPost (SQLiteDatabase db)
+
+    public TblPost(SQLiteDatabase db)
     {
         this.db = db;
     }
     DbBitmapUtility dbBit = new DbBitmapUtility();
 
-    public void Insert (favPost favPost)
+    public int Insert(Post favPost)
     {
         ContentValues cv = new ContentValues();
         cv.put(NAZIV, favPost.getNaziv());
         cv.put(Link, favPost.getLink());
 
         //ovo mozda radi, ali mozda zbog picassa ce trebat izmjenit neke stvari
-        cv.put(Thumbnail, dbBit.getBytes(favPost.getThumbnail()));
+        //cv.put(Thumbnail, dbBit.getBytes(favPost.getThumbnail()));
 
         cv.put(User, favPost.getUser());
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
         cv.put(VRIJEMEKREIRANJA, sdf.format(favPost.getVrijemeKreiranja()));
 
-        int id = (int)this.db.insertOrThrow(NAZIV_TABLICE, null, cv);
+        int id = (int) this.db.insertOrThrow(NAZIV_TABLICE, null, cv);
         favPost.setID(id);
+        return id;
     }
 
-    public void Delete (favPost favPost)
+    public void Delete(Post favPost)
     {
         this.db.delete(NAZIV_TABLICE, ID + "=?", new String[]{favPost.getID()+""});
     }
 
-    public ListFavPost SelectAll ()
+    public ArrayList<Post> SelectAll()
     {
         return this.select(null);
     }
 
 
     //nisam napravio update, jel nam uopće treba?
+    //brijem da ne
 
-    private ListFavPost select (String id)
+    private ArrayList<Post> select(String id)
     {
         String[] kolone = new String[]{ID, NAZIV, Link, Thumbnail, User, VRIJEMEKREIRANJA, PostID};
         String where = null;
@@ -71,20 +73,21 @@ public class tblFavPost {
         }
         Cursor cursor = this.db.query(NAZIV_TABLICE, kolone, where, whereArgs, null, null, ID+" DESC");
 
-        ListFavPost lista = new ListFavPost();
+        ArrayList<Post> lista = new ArrayList<>();
 
         while (cursor.moveToNext())
         {
-            favPost favPost = new favPost();
+            Post favPost = new Post();
 
             favPost.setID(cursor.getInt(cursor.getColumnIndex(ID)));
             favPost.setNaziv(cursor.getString(cursor.getColumnIndex(NAZIV)));
             favPost.setLink(cursor.getString(cursor.getColumnIndex(Link)));
 
             //ovo mozda radi, ali mozda zbog picassa ce trebat izmjenit neke stvari
+            /*
             if (cursor.getBlob(cursor.getColumnIndex(Thumbnail)) != null)
                 favPost.setThumbnail(dbBit.getImage(cursor.getBlob(cursor.getColumnIndex(Thumbnail))));
-
+*/
             favPost.setUser(cursor.getString(cursor.getColumnIndex(User)));
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy. HH:mm");
@@ -96,18 +99,17 @@ public class tblFavPost {
             }
 
             favPost.setPostID(cursor.getString(cursor.getColumnIndex(PostID)));
-
             lista.add(favPost);
         }
 
         return lista;
     }
 
-    public favPost Select (int id)
+    public Post Select(int id)
     {
-        favPost favPost = null;
+        Post favPost = null;
 
-        ListFavPost favPostovi = this.select(String.valueOf(id));
+        ArrayList<Post> favPostovi = this.select(String.valueOf(id));
         if (favPostovi.size() == 1)
             favPost = favPostovi.get(0);
 

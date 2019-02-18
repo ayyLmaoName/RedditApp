@@ -1,7 +1,6 @@
-package projekt.redditapp;
+package projekt.redditapp.adapters;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,15 +8,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import projekt.redditapp.Baza.*;
+import java.util.ArrayList;
 
-public class FavSubAdapter extends ArrayAdapter<favSub> {
+import projekt.redditapp.Baza.*;
+import projekt.redditapp.R;
+import projekt.redditapp.models.Subreddit;
+
+public class FavSubAdapter extends ArrayAdapter<Subreddit> {
     LayoutInflater inflater;
     DbBitmapUtility dbBit = new DbBitmapUtility();
 
 
     public FavSubAdapter(Context context, int textViewResourceId,
-                            ListFavSub objects) {
+                         ArrayList<Subreddit> objects) {
         super(context, textViewResourceId, objects);
         this.inflater = LayoutInflater.from(context);
     }
@@ -25,14 +28,14 @@ public class FavSubAdapter extends ArrayAdapter<favSub> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        final favSub favSub = this.getItem(position);
+        final Subreddit favSub = this.getItem(position);
 
         if (convertView == null)
             convertView = this.inflater.inflate(R.layout.fav_sub, null);
 
         final Context context = this.inflater.getContext();
 
-        TextView tvNazivSub = (TextView) convertView.findViewById(R.id.tvNazivRez);
+        TextView tvNazivSub = (TextView) convertView.findViewById(R.id.tvSubNaziv);
         View vZadnjiViden = (View) convertView.findViewById(R.id.vZadnjiViden);
         ImageButton ibFavoriteSub = (ImageButton) convertView.findViewById(R.id.ibFavoriteSub);
 
@@ -49,7 +52,7 @@ public class FavSubAdapter extends ArrayAdapter<favSub> {
 
             @Override
             public void onClick(View v) {
-                tblFavSub tblFavSub = new tblFavSub(new Baza(context).vratiBazu());
+                TblSubreddit tblFavSub = new TblSubreddit(new Baza(context).vratiBazu());
                 tblFavSub.Delete(favSub);
                 remove(favSub);
             }

@@ -1,24 +1,20 @@
-package projekt.redditapp.Baza;
+package projekt.redditapp.models;
 
-public class favSub {
+public class Subreddit {
     //polja
     private int ID;
     private String Naziv;
     private String Link;
     private String ZadnjiViden; //zadnji viden post na odredenom subredditu, koristi se kako bi objavili korisniku jel ima novih postova
 
-
-    //konstruktori
-    public favSub() {
+    public Subreddit() {
     }
 
-    public favSub(int ID, String naziv, String link, String zadnjiViden) {
-        this.ID = ID;
+    public Subreddit(String naziv, String link, String zadnjiViden) {
         Naziv = naziv;
         Link = link;
         ZadnjiViden = zadnjiViden;
     }
-
 
     //get i set
     public int getID() {
