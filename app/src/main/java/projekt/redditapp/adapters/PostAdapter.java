@@ -63,6 +63,8 @@ public class PostAdapter extends ArrayAdapter<Post> {
         tvUserRez.setText(post.getUser());
         vPostIDrez.setTag(post.getPostID());
 
+        tvNazivRez.setSelected(true);
+
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         tvKreiranjeRez.setText(dateFormat.format(post.getVrijemeKreiranja()));
 

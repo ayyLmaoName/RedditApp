@@ -54,6 +54,8 @@ public class FavPostAdapter extends ArrayAdapter<Post> {
         tvKreiranje.setText(favPost.getVrijemeKreiranja().toString());
         vPostID.setTag(favPost.getPostID());
 
+        tvNaziv.setSelected(true);
+
 
         if (favPost.getThumbnail() == null) {
             ivThumbnail.setImageDrawable(context.getDrawable(R.drawable.reddit_logo));
