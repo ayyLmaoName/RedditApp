@@ -1,6 +1,8 @@
 package projekt.redditapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +41,6 @@ public class FavSubAdapter extends ArrayAdapter<Subreddit> {
         View vZadnjiViden = (View) convertView.findViewById(R.id.vZadnjiViden);
         ImageButton ibFavoriteSub = (ImageButton) convertView.findViewById(R.id.ibFavoriteSub);
 
-        //postavljanje vrijednosti
 
         //ivThumbnail.setImageDrawable();
         tvNazivSub.setText(favSub.getNaziv());
@@ -55,6 +56,15 @@ public class FavSubAdapter extends ArrayAdapter<Subreddit> {
                 TblSubreddit tblFavSub = new TblSubreddit(new Baza(context).vratiBazu());
                 tblFavSub.Delete(favSub);
                 remove(favSub);
+            }
+        });
+
+        tvNazivSub.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.reddit.com/r/" + tvNazivSub.getText().toString() + "/"));
+                getContext().startActivity(intent);
             }
         });
 
