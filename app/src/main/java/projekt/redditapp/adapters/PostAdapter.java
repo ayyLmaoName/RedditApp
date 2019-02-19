@@ -49,6 +49,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
         TextView tvUserRez = convertView.findViewById(R.id.tvUserRez);
         TextView tvKreiranjeRez = convertView.findViewById(R.id.tvKreiranjeRez);
         View vPostIDrez = convertView.findViewById(R.id.vPostIDrez);
+        ImageView ivUpvotes = convertView.findViewById(R.id.ivUpvotesRez);
         imageButton = convertView.findViewById(R.id.ibFavoriteRez);
 
         if (post.getThumbnail() == null) {
@@ -62,6 +63,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
         tvNazivRez.setTag(post.getLink());
         tvUserRez.setText(post.getUser());
         vPostIDrez.setTag(post.getPostID());
+        ivUpvotes.setBackground(context.getDrawable(R.drawable.upvote));
 
         tvNazivRez.setSelected(true);
 
@@ -73,6 +75,7 @@ public class PostAdapter extends ArrayAdapter<Post> {
         } else {
             imageButton.setBackground(context.getDrawable(R.drawable.prazno));
         }
+
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override

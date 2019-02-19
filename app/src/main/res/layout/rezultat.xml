@@ -4,21 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:paddingBottom="10dp"
-    >
+    android:paddingBottom="10dp">
 
     <ImageView
         android:id="@+id/ivThumbnailRez"
         android:layout_width="70dp"
-        android:layout_margin="10dp"
         android:layout_height="70dp"
-        />
+        android:layout_margin="10dp" />
 
     <LinearLayout
         android:layout_width="235dp"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginLeft="-10dp">
+        android:layout_marginLeft="-10dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tvNazivRez"
@@ -26,12 +24,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:clickable="true"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:maxLines="2"
             android:paddingLeft="5dp"
-            android:textStyle="bold"
             android:scrollHorizontally="true"
-            android:text="" />
+            android:text=""
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvUserRez"
@@ -41,14 +39,28 @@
             android:paddingLeft="5dp"
             android:text="" />
 
-        <TextView
-            android:id="@+id/tvUpvotesRez"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:clickable="true"
-            android:paddingLeft="5dp"
-            android:text="" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvUpvotesRez"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:clickable="true"
+                android:paddingLeft="5dp"
+                android:text="" />
+
+            <ImageView
+                android:id="@+id/ivUpvotesRez"
+                android:layout_width="13dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginLeft="5dp"
+                android:layout_height="13dp" />
+
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/tvKreiranjeRez"
@@ -64,11 +76,11 @@
     <!-- ovaj view služi da bi se popunio prostor + spremanje postID u tag-->
 
     <View
+        android:id="@+id/vPostIDrez"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:id="@+id/vPostIDrez"
-        android:tag=""/>
+        android:tag="" />
 
     <ImageButton
         android:id="@+id/ibFavoriteRez"
@@ -76,6 +88,6 @@
         android:layout_height="48dp"
         android:layout_alignParentRight="true"
         android:background="@drawable/prazno"
-        android:layout_marginLeft="-5dp"/>
+        android:padding="3dp" />
 
 </LinearLayout>
