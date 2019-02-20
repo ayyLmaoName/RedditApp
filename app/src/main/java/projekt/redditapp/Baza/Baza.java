@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 public class Baza {
-    public static final int TRENUTNA_VERZIJA = 6;
+    public static final int TRENUTNA_VERZIJA = 7;
     BazaOpen open;
 
     public Baza(Context context) {

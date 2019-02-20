@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements PostProvider {
                             data.getUrl(), data.getAuthor(), data.getUps(), created, data.getId());
 
                     String thumb = data.getThumbnail();
-                    if (thumb != null && !thumb.equals("self")) {
+                    if (thumb != null && !thumb.equals("self") && thumb.length() > 0) {
                         rezultat.setThumbnail(thumb);
                     }
 
